@@ -103,7 +103,7 @@ else:
         st.session_state["logeado"] = False
         st.rerun()
 
-    st.title("👗 Mi Legado - Boutique Estefania")
+    st.title("👗 Boutique Estefania")
     
     # --- BUSCADOR ---
     with st.container():
@@ -254,3 +254,4 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"Error de conexión: {e}")
+
