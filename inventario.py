@@ -1,7 +1,7 @@
 import streamlit as st
 import mysql.connector
 import pandas as pd
-from io import BytesIO  # <-- Agregado para el manejo del archivo Excel
+from io import BytesIO
 
 # --- CONFIGURACIÓN DE PÁGINA (Debe ir al inicio) ---
 st.set_page_config(page_title="Inventario Estefania - Soles", layout="wide")
@@ -69,7 +69,16 @@ else:
         if not df.empty:
             st.subheader(f"📊 Stock Actual ({len(df)} registros)")
 
-            # --- LÓGICA DEL BOTÓN EXCEL (Agregada) ---
+            # --- AGREGADO: FUNCIÓN SEMÁFORO DE STOCK ---
+            def resaltar_stock(row):
+                if row['inventario'] == 0:
+                    return ['background-color: #ffcccc'] * len(row) # Rojo (Agotado)
+                elif 1 <= row['inventario'] <= 3:
+                    return ['background-color: #fff3cd'] * len(row) # Amarillo/Naranja (Pocas unidades)
+                else:
+                    return [''] * len(row)
+            
+            # --- AGREGADO: PREPARACIÓN EXCEL ---
             output = BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 df.to_excel(writer, index=False, sheet_name='Inventario')
@@ -81,13 +90,17 @@ else:
                 file_name="inventario_estefania.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
-            # -----------------------------------------
 
-            st.dataframe(df.style.format({
-                "precio_compra": "S/ {:.2f}", 
-                "precio_venta": "S/ {:.2f}", 
-                "costo_total_compra": "S/ {:.2f}"
-            }), use_container_width=True, hide_index=True)
+            # --- TABLA CON FORMATO Y COLORES ---
+            st.dataframe(
+                df.style.apply(resaltar_stock, axis=1).format({
+                    "precio_compra": "S/ {:.2f}", 
+                    "precio_venta": "S/ {:.2f}", 
+                    "costo_total_compra": "S/ {:.2f}"
+                }), 
+                use_container_width=True, 
+                hide_index=True
+            )
         else:
             st.warning("No se encontraron registros activos.")
 
