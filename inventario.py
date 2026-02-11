@@ -97,7 +97,6 @@ else:
             st.rerun()
 
     st.markdown("<h1>👗 Boutique Estefanía: Inventario Real</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-style: italic; color: #7d3c98;'>\"Una mujer decidida es simplemente invencible\"</p>", unsafe_allow_html=True)
     st.markdown("---")
 
     # --- BUSCADOR ---
@@ -281,3 +280,4 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"❌ Estefanía, hubo un pequeño tropiezo: {e}")
+
