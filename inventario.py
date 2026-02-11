@@ -67,8 +67,7 @@ def login():
     st.markdown("<br><br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.markdown("<h1 style='color: #5b2c6f;'>✨ Bienvenida, Estefanía</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #884ea0;'>Tu esfuerzo hoy es el éxito de mañana.</p>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color: #5b2c6f;'>✨ Welcome to Estefania's Boutique</h1>", unsafe_allow_html=True)
         with st.form("login_form"):
             user_input = st.text_input("Usuario")
             pass_input = st.text_input("Contraseña", type="password")
@@ -280,4 +279,5 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"❌ Estefanía, hubo un pequeño tropiezo: {e}")
+
 
