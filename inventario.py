@@ -151,7 +151,7 @@ else:
         
         # --- PESTAÑAS DE ACCIONES ---
         tab_add, tab_edit, tab_del, tab_papelera, tab_stats = st.tabs([
-            "✨ Nueva Prenda", "📝 Editar", "🗑️ Papelera", "♻️ Recuperar", "📊 Mi Progreso"
+            "✨ Nueva Prenda", "📝 Editar", "🗑️ Papelera", "♻️ Recuperar", "📊 Reportes"
         ])
 
         with tab_add:
@@ -279,6 +279,7 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"❌ Estefanía, hubo un pequeño tropiezo: {e}")
+
 
 
 
