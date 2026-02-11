@@ -289,7 +289,7 @@ else:
     except Exception as e:
         # 1. Mensaje visual amigable
         st.error("### ⚠️ Conexión en pausa")
-        st.write("Estefanía, no logro llegar a la base de datos de Clever Cloud. Esto puede ser por mantenimiento o inactividad.")
+        st.write("Usuario, no logro llegar a la base de datos de Clever Cloud. Esto puede ser por mantenimiento o inactividad.")
         
         # 2. El botón de reintento "Mágico"
         if st.button("🔄 Intentar reconectar ahora"):
@@ -301,5 +301,6 @@ else:
         # 4. Detalle técnico oculto (por si necesitas pedírme ayuda a mí)
         with st.expander("Ver detalle técnico del error"):
             st.code(e)
+
 
 
