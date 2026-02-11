@@ -98,7 +98,7 @@ if not st.session_state["logeado"]:
 else:
     # Sidebar delicada
     with st.sidebar:
-        st.markdown("<h2 style='text-align: center;'>Mi Panel</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>🖥️ Mi Panel</h2>", unsafe_allow_html=True)
         st.markdown("---")
         if st.button("Cerrar Sesión"):
             st.session_state["logeado"] = False
@@ -288,3 +288,4 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"❌ Estefanía, hubo un pequeño tropiezo: {e}")
+
