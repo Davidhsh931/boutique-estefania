@@ -71,7 +71,7 @@ def login():
         with st.form("login_form"):
             user_input = st.text_input("Usuario")
             pass_input = st.text_input("Contraseña", type="password")
-            submit = st.form_submit_button("Entrar con Seguridad")
+            submit = st.form_submit_button("Entrar")
             
             if submit:
                 if user_input == st.secrets["auth"]["usuario"] and pass_input == st.secrets["auth"]["clave"]:
@@ -95,7 +95,7 @@ else:
             st.session_state["logeado"] = False
             st.rerun()
 
-    st.markdown("<h1>👗 Boutique Estefanía: Inventario Real</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>👗 Boutique Estefanía: Inventario</h1>", unsafe_allow_html=True)
     st.markdown("---")
 
     # --- BUSCADOR ---
@@ -279,5 +279,6 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"❌ Estefanía, hubo un pequeño tropiezo: {e}")
+
 
 
