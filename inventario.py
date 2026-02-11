@@ -2,14 +2,13 @@ import streamlit as st
 import mysql.connector
 import pandas as pd
 
-# --- CONEXIÓN A LA NUBE (CLEVER CLOUD) ---
 def conectar():
     return mysql.connector.connect(
-        host="b36qibv5gsdzkaheh8ur-mysql.services.clever-cloud.com",
-        user="ukqcyv38ljdothuh",
-        password="N1JQSHXWVAKn8DI1dZO5", # <--- Pon la clave de Clever Cloud aquí
-        database="b36qibv5gsdzkaheh8ur",
-        port=3306
+        host=st.secrets["mysql"]["host"],
+        user=st.secrets["mysql"]["user"],
+        password=st.secrets["mysql"]["password"],
+        database=st.secrets["mysql"]["database"],
+        port=st.secrets["mysql"]["port"]
     )
 
 # ... El resto de tu código Streamlit sigue igual ...
@@ -197,4 +196,5 @@ try:
 
     conn.close()
 except Exception as e:
+
     st.error(f"❌ Error: {e}")
