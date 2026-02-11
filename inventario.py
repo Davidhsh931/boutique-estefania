@@ -66,8 +66,16 @@ else:
         if not df.empty:
             st.subheader(f"📊 Stock Actual ({len(df)} registros)")
             
+            # --- FUNCIÓN PARA COLOREAR STOCK ---
+            def resaltar_stock(row):
+                if row['inventario'] == 0:
+                    return ['background-color: #ffcccc'] * len(row) # Rojo: Agotado
+                elif 1 <= row['inventario'] <= 3:
+                    return ['background-color: #fff3cd'] * len(row) # Amarillo: Crítico
+                else:
+                    return [''] * len(row)
+
             # --- BOTÓN DE EXCEL ---
-            # Preparamos el archivo en memoria
             output = BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 df.to_excel(writer, index=False, sheet_name='Inventario')
@@ -80,11 +88,16 @@ else:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
-            st.dataframe(df.style.format({
-                "precio_compra": "S/ {:.2f}", 
-                "precio_venta": "S/ {:.2f}", 
-                "costo_total_compra": "S/ {:.2f}"
-            }), use_container_width=True, hide_index=True)
+            # --- VISTA DE TABLA ---
+            st.dataframe(
+                df.style.apply(resaltar_stock, axis=1).format({
+                    "precio_compra": "S/ {:.2f}", 
+                    "precio_venta": "S/ {:.2f}", 
+                    "costo_total_compra": "S/ {:.2f}"
+                }), 
+                use_container_width=True, 
+                hide_index=True
+            )
         else:
             st.warning("No se encontraron registros activos.")
 
@@ -125,9 +138,46 @@ else:
                         st.success("✅ Agregado con éxito!")
                         st.rerun()
 
-        # (El resto de las pestañas Editar, Papelera y Stats se mantienen igual que antes...)
-        # Nota: Por espacio omití el detalle interno, pero asegúrate de mantener 
-        # las mismas funciones de UPDATE y DELETE que ya tenías funcionando.
+        with tab_edit:
+            id_editar = st.number_input("ID del producto a modificar:", min_value=0, step=1)
+            if id_editar > 0 and not df.empty:
+                prod = df[df['id'] == id_editar]
+                if not prod.empty:
+                    with st.form("form_edit"):
+                        ce1, ce2 = st.columns(2)
+                        n_stock = ce1.number_input("Nuevo Stock:", value=int(prod.iloc[0]['inventario']))
+                        n_venta = ce2.number_input("Nuevo Precio Venta (S/):", value=float(prod.iloc[0]['precio_venta']))
+                        if st.form_submit_button("💾 Guardar Cambios"):
+                            cursor = conn.cursor()
+                            cursor.execute("UPDATE inventario_general SET inventario=%s, precio_venta=%s WHERE id=%s", (n_stock, n_venta, id_editar))
+                            conn.commit()
+                            st.success("Actualizado")
+                            st.rerun()
+
+        with tab_del:
+            id_borrar = st.number_input("ID para mover a papelera:", min_value=0, step=1, key="del_id")
+            if st.button("🗑️ Confirmar Movimiento"):
+                cursor = conn.cursor()
+                cursor.execute("UPDATE inventario_general SET estado='papelera' WHERE id=%s", (id_borrar,))
+                conn.commit()
+                st.rerun()
+
+        with tab_papelera:
+            df_pap = pd.read_sql("SELECT id, tipo, marca, modelo FROM inventario_general WHERE estado='papelera'", conn)
+            st.table(df_pap)
+            id_res = st.number_input("ID para restaurar:", min_value=0, step=1)
+            if st.button("♻️ Restaurar"):
+                cursor = conn.cursor()
+                cursor.execute("UPDATE inventario_general SET estado='activo' WHERE id=%s", (id_res,))
+                conn.commit()
+                st.rerun()
+
+        with tab_stats:
+            st.subheader("💰 Resumen Financiero")
+            total_inv = (df['inventario'] * df['precio_compra']).sum()
+            potencial = (df['inventario'] * df['precio_venta']).sum()
+            st.metric("Inversión Total en Stock", f"S/ {total_inv:,.2f}")
+            st.metric("Venta Potencial Total", f"S/ {potencial:,.2f}")
 
         conn.close()
     except Exception as e:
