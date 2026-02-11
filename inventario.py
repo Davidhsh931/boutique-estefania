@@ -41,26 +41,35 @@ st.markdown("""
         border-radius: 15px;
         border: 1px solid #ebedef;
     }
-    /* Tarjetas decorativas */
-    .stMetric {
+    /* Tarjetas decorativas con efecto de elevación */
+    [data-testid="stMetric"] {
         background-color: white;
         padding: 15px;
         border-radius: 15px;
         box-shadow: 2px 2px 15px rgba(0,0,0,0.05);
         border-left: 5px solid #d2b4de;
+        transition: transform 0.2s;
+    }
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 10px 20px rgba(142, 68, 173, 0.1);
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 1. FUNCIÓN DE CONEXIÓN ---
+# --- 1. FUNCIÓN DE CONEXIÓN ROBUSTA ---
 def conectar():
-    return mysql.connector.connect(
-        host=st.secrets["mysql"]["host"],
-        user=st.secrets["mysql"]["user"],
-        password=st.secrets["mysql"]["password"],
-        database=st.secrets["mysql"]["database"],
-        port=st.secrets["mysql"]["port"]
-    )
+    try:
+        return mysql.connector.connect(
+            host=st.secrets["mysql"]["host"],
+            user=st.secrets["mysql"]["user"],
+            password=st.secrets["mysql"]["password"],
+            database=st.secrets["mysql"]["database"],
+            port=st.secrets["mysql"]["port"],
+            connect_timeout=10 # Tiempo de espera para evitar bloqueos
+        )
+    except Exception as e:
+        raise e
 
 # --- 2. SISTEMA DE LOGIN ---
 def login():
@@ -279,9 +288,3 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"❌ Estefanía, hubo un pequeño tropiezo: {e}")
-
-
-
-
-
-
