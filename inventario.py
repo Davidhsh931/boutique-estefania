@@ -4,7 +4,7 @@ import pandas as pd
 from io import BytesIO
 
 # --- CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(page_title="Boutique Estefanía - Gestión con Corazón", layout="wide")
+st.set_page_config(page_title="Estefania's Boutique - Gestión", layout="wide")
 
 # --- ESTILO FEMENINO Y PROFESIONAL (CSS CUSTOM) ---
 st.markdown("""
@@ -95,7 +95,7 @@ else:
             st.session_state["logeado"] = False
             st.rerun()
 
-    st.markdown("<h1>👗 Boutique Estefanía: Inventario</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>👗 Estefania's Boutique: Inventario</h1>", unsafe_allow_html=True)
     st.markdown("---")
 
     # --- BUSCADOR ---
@@ -279,6 +279,7 @@ else:
         conn.close()
     except Exception as e:
         st.error(f"❌ Estefanía, hubo un pequeño tropiezo: {e}")
+
 
 
 
