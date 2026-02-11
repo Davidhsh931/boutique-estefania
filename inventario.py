@@ -1,6 +1,7 @@
 import streamlit as st
 import mysql.connector
 import pandas as pd
+from io import BytesIO  # <-- Agregado para el manejo del archivo Excel
 
 # --- CONFIGURACIÓN DE PÁGINA (Debe ir al inicio) ---
 st.set_page_config(page_title="Inventario Estefania - Soles", layout="wide")
@@ -67,6 +68,21 @@ else:
 
         if not df.empty:
             st.subheader(f"📊 Stock Actual ({len(df)} registros)")
+
+            # --- LÓGICA DEL BOTÓN EXCEL (Agregada) ---
+            output = BytesIO()
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, index=False, sheet_name='Inventario')
+            processed_data = output.getvalue()
+
+            st.download_button(
+                label="📥 Descargar Inventario en Excel",
+                data=processed_data,
+                file_name="inventario_estefania.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+            # -----------------------------------------
+
             st.dataframe(df.style.format({
                 "precio_compra": "S/ {:.2f}", 
                 "precio_venta": "S/ {:.2f}", 
